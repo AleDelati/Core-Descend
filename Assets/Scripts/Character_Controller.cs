@@ -3,16 +3,25 @@ using UnityEngine;
 public class Character_Controller : MonoBehaviour {
 
     [SerializeField] float speed = 8;
-    [SerializeField] float jumpForce = 10;
 
     // private
+    GameManager GM;
+
     Rigidbody2D rb;
+    BoxCollider2D boxCollider;
+    SpriteRenderer sR;
 
     Vector3 initialPos;
+    int state = 0;  // 0 - Normal | 1 - Elevador
 
     private void Start() {
-        rb = GetComponent<Rigidbody2D>();
+        GM = GameObject.Find("Game Manager").GetComponent<GameManager>();
 
+        rb = GetComponent<Rigidbody2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
+        sR = GetComponent<SpriteRenderer>();
+
+        
         initialPos = transform.position;
     }
 
@@ -21,18 +30,31 @@ public class Character_Controller : MonoBehaviour {
     }
 
     private void input() {
-        if (Input.GetKey(KeyCode.A)) {
+        if (Input.GetKey(KeyCode.A) && state == 0) {
             transform.position = transform.position + new Vector3(-1, 0) * speed * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.D)) {
+        if (Input.GetKey(KeyCode.D) && state == 0) {
             transform.position = transform.position + new Vector3(1, 0) * speed * Time.deltaTime;
         }
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            rb.AddForce(new Vector2(0, jumpForce));
+        if (Input.GetKey(KeyCode.W) && state == 0) {
+            transform.position = transform.position + new Vector3(0, 1) * speed * Time.deltaTime;
         }
-        if (Input.GetKeyDown(KeyCode.R)) {
+        if (Input.GetKey(KeyCode.S) && state == 0) {
+            transform.position = transform.position + new Vector3(0, -1) * speed * Time.deltaTime;
+        }
+        if (Input.GetKeyDown(KeyCode.E)) {
+            EnterElevator();
+        }
+        if (Input.GetKeyDown(KeyCode.R) && state == 0) {
             transform.position = initialPos;
         }
+    }
+
+    private void EnterElevator() {
+        if (state == 0) { state = 1; sR.enabled = false; }
+        else if(state == 1) { state = 0; sR.enabled = true; }
+        GM.setState(state);
+        Debug.Log("Current state " + state);
     }
 
 }

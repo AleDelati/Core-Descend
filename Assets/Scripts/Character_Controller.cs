@@ -5,17 +5,23 @@ public class Character_Controller : MonoBehaviour {
     [SerializeField] float speed = 8;
 
     // private
+    
     GameManager GM;
+    Elevator_Controller elevatorC;
 
     Rigidbody2D rb;
     BoxCollider2D boxCollider;
     SpriteRenderer sR;
+
+    //
 
     Vector3 initialPos;
     int state = 0;  // 0 - Normal | 1 - Elevador
 
     private void Start() {
         GM = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        elevatorC = GameObject.Find("Elevator").GetComponent<Elevator_Controller>();
+
 
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
@@ -42,12 +48,14 @@ public class Character_Controller : MonoBehaviour {
         if (Input.GetKey(KeyCode.S) && state == 0) {
             transform.position = transform.position + new Vector3(0, -1) * speed * Time.deltaTime;
         }
-        if (Input.GetKeyDown(KeyCode.E)) {
+        if (Input.GetKeyDown(KeyCode.E) && elevatorC.GetProximity()) {
             EnterElevator();
         }
         if (Input.GetKeyDown(KeyCode.R) && state == 0) {
             transform.position = initialPos;
         }
+
+        if (state == 1){ transform.position = elevatorC.transform.position + new Vector3(0, 5, 0); }
     }
 
     private void EnterElevator() {

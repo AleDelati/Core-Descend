@@ -6,7 +6,8 @@ public class CameraManager : MonoBehaviour {
     [SerializeField] GameObject player;
     [SerializeField] GameObject elevator;
 
-    [SerializeField] float zoom;
+    [SerializeField] float characterZoom;
+    [SerializeField] float elevatorZoom;
 
     //private
     GameManager GM;
@@ -16,8 +17,6 @@ public class CameraManager : MonoBehaviour {
 
     private void Start() {
         GM = GameObject.Find("Game Manager").GetComponent<GameManager>();
-
-        zoom = transform.GetComponent<Camera>().orthographicSize;
         target = player;
     }
 
@@ -29,10 +28,16 @@ public class CameraManager : MonoBehaviour {
 
     private void UpdateCamera() {
 
-        if(state == 0) { target = player; } else if ( state == 1) { target = elevator; }
+        if(state == 0) {
+            target = player;
+            transform.GetComponent<Camera>().orthographicSize = characterZoom;
+        }
+        else if ( state == 1) {
+            target = elevator;
+            transform.GetComponent<Camera>().orthographicSize = elevatorZoom;
+        }
 
         transform.SetPositionAndRotation(new Vector3(target.transform.position.x, target.transform.position.y, -10), Quaternion.identity);
-        transform.GetComponent<Camera>().orthographicSize = zoom;
     }
 
 }

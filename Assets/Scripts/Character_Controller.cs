@@ -61,7 +61,7 @@ public class Character_Controller : MonoBehaviour {
     private void EnterElevator() {
         if (state == 0) { state = 1; sR.enabled = false; }
         else if(state == 1) { state = 0; sR.enabled = true; }
-        GM.setState(state);
+        GM.SetState(state);
         Debug.Log("Current state " + state);
     }
 

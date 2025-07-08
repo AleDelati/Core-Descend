@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class CameraManager : MonoBehaviour {
 
@@ -7,7 +6,9 @@ public class CameraManager : MonoBehaviour {
     [SerializeField] GameObject elevator;
 
     [SerializeField] float characterZoom;
+
     [SerializeField] float elevatorZoom;
+    [SerializeField] float elevatorOffset = 5;
 
     //private
     GameManager GM;
@@ -21,12 +22,14 @@ public class CameraManager : MonoBehaviour {
     }
 
     private void Update() {
-        state = GM.getState();
+        state = GM.GetState();
 
         UpdateCamera();
     }
 
     private void UpdateCamera() {
+
+        Vector2  currentOffset = Vector2.zero;
 
         if(state == 0) {
             target = player;
@@ -35,9 +38,14 @@ public class CameraManager : MonoBehaviour {
         else if ( state == 1) {
             target = elevator;
             transform.GetComponent<Camera>().orthographicSize = elevatorZoom;
+
+            // Offset de la camara dependiendo de la direccion de movimiento del elevador
+            if (elevator.GetComponent<Elevator_Controller>().GetLastInput() == 0){  }
+            else if((elevator.GetComponent<Elevator_Controller>().GetLastInput() == 1)){ currentOffset = new Vector2(0, elevatorOffset); }
+            else if((elevator.GetComponent<Elevator_Controller>().GetLastInput() == -1)){ currentOffset = new Vector2(0, -elevatorOffset); }
         }
 
-        transform.SetPositionAndRotation(new Vector3(target.transform.position.x, target.transform.position.y, -10), Quaternion.identity);
+        transform.SetPositionAndRotation(new Vector3(target.transform.position.x + currentOffset.x, target.transform.position.y + currentOffset.y, -10), Quaternion.identity);
     }
 
 }

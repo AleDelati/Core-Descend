@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Elevator_Controller : MonoBehaviour {
 
@@ -12,7 +11,7 @@ public class Elevator_Controller : MonoBehaviour {
     GameManager GM;
     Vector3 initialPos;
 
-    int state;
+    int state, lastInput = 0;
     bool playerOnReach = false;
 
     private void Start() {
@@ -20,18 +19,21 @@ public class Elevator_Controller : MonoBehaviour {
     }
 
     private void Update() {
-        state = GM.getState();
+        state = GM.GetState();
+        if (state == 0) { lastInput = 0; }
         
-        input();
+        Input();
         UpdateProximityCheck();
     }
 
-    private void input() {
-        if (Input.GetKey(KeyCode.W) && state == 1) {
+    private void Input() {
+        if (UnityEngine.Input.GetKey(KeyCode.W) && state == 1) {
             transform.position = transform.position + new Vector3(0, 1) * speed * Time.deltaTime;
+            lastInput = 1;
         }
-        if (Input.GetKey(KeyCode.S) && state == 1) {
+        if (UnityEngine.Input.GetKey(KeyCode.S) && state == 1) {
             transform.position = transform.position + new Vector3(0, -1) * speed * Time.deltaTime;
+            lastInput = -1;
         }
     }
 
@@ -55,6 +57,10 @@ public class Elevator_Controller : MonoBehaviour {
 
     public bool GetProximity() {
         return playerOnReach;
+    }
+
+    public int GetLastInput() {
+        return lastInput;
     }
 
 }

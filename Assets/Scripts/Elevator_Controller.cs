@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class Elevator_Controller : MonoBehaviour {
 
-    [SerializeField] float speed = 4;
+    [SerializeField] float downSpeed = 4;
+    [SerializeField] float upSpeed = 3;
 
     [SerializeField] Vector3 proximityOffset;
     [SerializeField] float proximityRadius = 4;
@@ -16,6 +17,8 @@ public class Elevator_Controller : MonoBehaviour {
 
     private void Start() {
         GM = GameObject.Find("Game Manager").GetComponent<GameManager>();
+
+        initialPos = transform.position;
     }
 
     private void Update() {
@@ -27,12 +30,12 @@ public class Elevator_Controller : MonoBehaviour {
     }
 
     private void Input() {
-        if (UnityEngine.Input.GetKey(KeyCode.W) && state == 1) {
-            transform.position = transform.position + new Vector3(0, 1) * speed * Time.deltaTime;
+        if (UnityEngine.Input.GetKey(KeyCode.W) && state == 1 && transform.position.y < initialPos.y) {
+            transform.position = transform.position + new Vector3(0, 1) * upSpeed * Time.deltaTime;
             lastInput = 1;
         }
         if (UnityEngine.Input.GetKey(KeyCode.S) && state == 1) {
-            transform.position = transform.position + new Vector3(0, -1) * speed * Time.deltaTime;
+            transform.position = transform.position + new Vector3(0, -1) * downSpeed * Time.deltaTime;
             lastInput = -1;
         }
     }
@@ -43,10 +46,10 @@ public class Elevator_Controller : MonoBehaviour {
     }
 
     private void UpdateProximityCheck() {
-        playerOnReach = CheckProximity();
+        playerOnReach = CheckPlayerProximity();
     }
 
-    private bool CheckProximity() {
+    private bool CheckPlayerProximity() {
         foreach(Collider2D collider in Physics2D.OverlapCircleAll(transform.position + proximityOffset, proximityRadius)) {
             if (collider.CompareTag("Player") == true) {
                 return true;

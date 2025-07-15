@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour {
 
     //private
 
-    private int state = 0;  // 0 - Normal | 1 - Elevador
+    private int state = 0;  // 0 - Normal | 1 - Elevador | 1 - Interior del Elevador
 
     void Start() {
         QualitySettings.vSyncCount = vsync;

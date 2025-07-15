@@ -39,6 +39,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: No Light
+    uniqueID: 3058330659
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

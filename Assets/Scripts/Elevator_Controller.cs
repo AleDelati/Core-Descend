@@ -26,7 +26,7 @@ public class Elevator_Controller : MonoBehaviour {
         if (state == 0) { lastInput = 0; }
         
         Input();
-        UpdateProximityCheck();
+        Update_ProximityCheck();
     }
 
     private void Input() {
@@ -45,7 +45,7 @@ public class Elevator_Controller : MonoBehaviour {
         Gizmos.DrawWireSphere(transform.position + proximityOffset, proximityRadius);
     }
 
-    private void UpdateProximityCheck() {
+    private void Update_ProximityCheck() {
         playerOnReach = CheckPlayerProximity();
     }
 

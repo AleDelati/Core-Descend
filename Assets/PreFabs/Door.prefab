@@ -152,6 +152,7 @@ GameObject:
   - component: {fileID: 782535074772309063}
   - component: {fileID: 6015743060962184806}
   - component: {fileID: 1902251759464938626}
+  - component: {fileID: 4168110572367547775}
   - component: {fileID: 6567947142615013659}
   m_Layer: 0
   m_Name: Door
@@ -291,9 +292,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   open: 0
-  doorOpen: {fileID: -1751510319, guid: de48fbd05281db74d9538565e534baf5, type: 3}
-  doorClose: {fileID: 1783691873, guid: de48fbd05281db74d9538565e534baf5, type: 3}
   interactRad: 1.5
+  doorSprites:
+  - {fileID: 1783691873, guid: de48fbd05281db74d9538565e534baf5, type: 3}
+  - {fileID: -1751510319, guid: de48fbd05281db74d9538565e534baf5, type: 3}
+  consoleSprites:
+  - {fileID: -1109091951, guid: 9a8da1db4368dbb4c8feee4da64f7123, type: 3}
+  - {fileID: -1489733786, guid: 9a8da1db4368dbb4c8feee4da64f7123, type: 3}
+  - {fileID: -912479607, guid: 9a8da1db4368dbb4c8feee4da64f7123, type: 3}
+  - {fileID: 1936275990, guid: 9a8da1db4368dbb4c8feee4da64f7123, type: 3}
+  - {fileID: -1532323676, guid: 9a8da1db4368dbb4c8feee4da64f7123, type: 3}
+  - {fileID: 1122504788, guid: 9a8da1db4368dbb4c8feee4da64f7123, type: 3}
+  - {fileID: 237873645, guid: 9a8da1db4368dbb4c8feee4da64f7123, type: 3}
+  - {fileID: 191191222, guid: 9a8da1db4368dbb4c8feee4da64f7123, type: 3}
+  repairable: 0
+  repaired: 0
+--- !u!114 &4168110572367547775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6972595995319547443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa78a31d9ad4dcd45a32f9cc03673685, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactRad: 1.5
+  repairable: 1
+  repaired: 0
+  repair_Scrap: 20
 --- !u!114 &6567947142615013659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,14 +359,14 @@ MonoBehaviour:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
       m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0.2562561, y: 1.3500061, z: 0}
+      m_Extent: {x: 0.3062439, y: 1.3999939, z: 0}
     m_EdgeProcessing: 1
-    m_TrimEdge: 0.15
+    m_TrimEdge: 0.1
     m_FlipX: 0
     m_FlipY: 0
-    m_InitialTrim: 0.05
+    m_InitialTrim: 0
   m_CastingOption: 2
-  m_PreviousTrimEdge: 0.15
+  m_PreviousTrimEdge: 0.1
   m_PreviousEdgeProcessing: 1
   m_PreviousShadowCastingSource: 2
   m_PreviousShadowShape2DSource: {fileID: 782535074772309063}

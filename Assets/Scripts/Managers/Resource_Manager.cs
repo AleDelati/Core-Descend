@@ -4,8 +4,13 @@ public class Resource_Manager : MonoBehaviour {
 
     [SerializeField] int scrapMetal = 0;
 
+    //
     public void AddScrapMetal(int amount) {
         scrapMetal += amount;
+    }
+
+    public void SubtractScrapMetal(int amount) {
+        scrapMetal -= amount;
     }
 
     public int ScrapMetal() {

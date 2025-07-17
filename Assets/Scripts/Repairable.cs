@@ -5,27 +5,35 @@ public class Repairable : MonoBehaviour {
 
     [Header("General Config")]
     [SerializeField] float interactRad = 1.5f;
+    [SerializeField] Vector3 interactOffset = Vector3.zero;
 
     [Header("Repair Config")]
     [SerializeField] bool repairable = false;
     [SerializeField] bool repaired = false;
     [SerializeField] int repair_Scrap;
 
+    [SerializeField] bool fixSprites = false;
+    [SerializeField] Sprite[] repairSprites;
+
     [SerializeField] Repairable[] repairTargets;
     [SerializeField] Light2D[] repairLights;
 
     Resource_Manager RM;
+    SpriteRenderer SR;
 
     private bool playerOnReach = false;
 
     //
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactRad);
+        Gizmos.DrawWireSphere(transform.position + interactOffset, interactRad);
     }
 
     private void Start() {
         RM = GameObject.Find("Game Manager").GetComponent<Resource_Manager>();
+        SR = GetComponent<SpriteRenderer>();
+
+        if(fixSprites){ SR.sprite = repairSprites[0]; }
     }
 
     private void Update() {
@@ -41,8 +49,10 @@ public class Repairable : MonoBehaviour {
                 RM.SubtractScrapMetal(repair_Scrap);
                 repaired = true;
 
+                if (fixSprites){ SR.sprite = repairSprites[1]; }
+
                 // Si hay objetivos de reparacion, activa la posibilidad de repararlos
-                for(int i = 0; i < repairTargets.Length; i++) {
+                for (int i = 0; i < repairTargets.Length; i++) {
                     if(repairTargets[i] != null) { repairTargets[i].SetRepairable(true); }
                 }
                 // Si hay luces vinculadas a la reparacion las activa
@@ -57,7 +67,7 @@ public class Repairable : MonoBehaviour {
     }
 
     private bool CheckPlayerProximity() {
-        foreach (Collider2D collider in Physics2D.OverlapCircleAll(transform.position, interactRad)) {
+        foreach (Collider2D collider in Physics2D.OverlapCircleAll(transform.position + interactOffset, interactRad)) {
             if (collider.CompareTag("Player") == true) {
                 return true;
             }

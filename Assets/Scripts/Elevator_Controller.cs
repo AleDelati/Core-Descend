@@ -10,6 +10,8 @@ public class Elevator_Controller : MonoBehaviour {
 
     // private
     GameManager GM;
+    GameObject Elevator_Energy;
+
     Vector3 initialPos;
 
     int state, lastInput = 0;
@@ -17,6 +19,7 @@ public class Elevator_Controller : MonoBehaviour {
 
     private void Start() {
         GM = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        Elevator_Energy = GameObject.Find("Elevator | Energy");
 
         initialPos = transform.position;
     }
@@ -30,13 +33,15 @@ public class Elevator_Controller : MonoBehaviour {
     }
 
     private void Input() {
-        if (UnityEngine.Input.GetKey(KeyCode.W) && state == 1 && transform.position.y < initialPos.y) {
-            transform.position = transform.position + new Vector3(0, 1) * upSpeed * Time.deltaTime;
-            lastInput = 1;
-        }
-        if (UnityEngine.Input.GetKey(KeyCode.S) && state == 1) {
-            transform.position = transform.position + new Vector3(0, -1) * downSpeed * Time.deltaTime;
-            lastInput = -1;
+        if (Elevator_Energy.GetComponent<Repairable>().GetRepairedStatus()) {
+            if (UnityEngine.Input.GetKey(KeyCode.W) && state == 1 && transform.position.y < initialPos.y) {
+                transform.position = transform.position + new Vector3(0, 1) * upSpeed * Time.deltaTime;
+                lastInput = 1;
+            }
+            if (UnityEngine.Input.GetKey(KeyCode.S) && state == 1) {
+                transform.position = transform.position + new Vector3(0, -1) * downSpeed * Time.deltaTime;
+                lastInput = -1;
+            }
         }
     }
 

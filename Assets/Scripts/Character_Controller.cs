@@ -20,6 +20,7 @@ public class Character_Controller : MonoBehaviour {
     Rigidbody2D rb;
     BoxCollider2D boxCollider;
     SpriteRenderer sR;
+    Animator animator;
     
     // External Ref
     GameObject elevator;
@@ -33,6 +34,7 @@ public class Character_Controller : MonoBehaviour {
     Vector3 mouseWorldPos; Vector3 mouseScreenPos;
     int state = 0;  // 0 - Normal | 1 - Elevador    | 2 - Interior
     int lastInput = 0;
+    bool mining = false;
 
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.yellow;
@@ -46,6 +48,7 @@ public class Character_Controller : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         sR = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
 
         elevator = GameObject.Find("Elevator");
         elevatorC = elevator.GetComponent<Elevator_Controller>();
@@ -57,15 +60,25 @@ public class Character_Controller : MonoBehaviour {
 
     private void Update() {
         Inputs();
+        Update_Animations();
     }
 
     private void Inputs() {
-
+        
+        // Mouse
         UpdateMouseInputs();
 
+        if (UnityEngine.Input.GetMouseButtonDown(0)) {
+            mining = true;
+        }
         if (UnityEngine.Input.GetMouseButton(0)) {
             MiningDetection();
         }
+        if (UnityEngine.Input.GetMouseButtonUp(0)) {
+            mining = false;
+        }
+
+        //
         if (UnityEngine.Input.GetKey(KeyCode.A) && Check_EnableToMove()) {
             lastInput = 0;
             transform.position = transform.position + new Vector3(-1, 0) * speed * Time.deltaTime;
@@ -80,9 +93,17 @@ public class Character_Controller : MonoBehaviour {
         if (UnityEngine.Input.GetKey(KeyCode.S) && Check_EnableToMove()) {
             transform.position = transform.position + new Vector3(0, -1) * speed * Time.deltaTime;
         }
+
+        if (UnityEngine.Input.GetKeyDown(KeyCode.E)) {
+            mining = true;
+        }
         if (UnityEngine.Input.GetKeyDown(KeyCode.E) && elevatorC.GetProximity()) {
             DriveElevator();
         }
+        if (UnityEngine.Input.GetKeyUp(KeyCode.E)) {
+            mining = false;
+        }
+
         if (UnityEngine.Input.GetKeyDown(KeyCode.Space)) {
             if(state == 1 || state == 2){ EnterElevator(); }
         }
@@ -149,8 +170,20 @@ public class Character_Controller : MonoBehaviour {
 
     //
     private void UpdateSprite() {
+        // Flipea el sprite
         if (lastInput == 0) { sR.flipX = false; robot_Light.transform.rotation = new Quaternion(0,0,0.707106829f,0.707106829f); }
         if (lastInput == 1) { sR.flipX = true; robot_Light.transform.rotation = new Quaternion(0, 0, -0.707106829f, 0.707106829f); }
+    }
+
+    private void Update_Animations() {
+        animator.SetBool("Mining", mining);
+        
+        // Sincroniza la animacion de la luz del robot con la animacion del robot en si                 |!!!|
+        Animator l_Animator = robot_Light.GetComponent<Animator>();
+        float TimeA = animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1f;
+        if (lastInput == 0) { l_Animator.Play("Player_Light_Left", 0, TimeA); }
+        if (lastInput == 1) { l_Animator.Play("Player_Light_Right", 0, TimeA); }
+
     }
 
     //

@@ -8,7 +8,7 @@ public class FuseBox : MonoBehaviour {
 
     SpriteRenderer SR;
     Repairable Rep;
-    Light2D light;
+    Light2D _light;
 
     private bool repaired;
 
@@ -16,7 +16,7 @@ public class FuseBox : MonoBehaviour {
     private void Start() {
         SR = GetComponent<SpriteRenderer>();
         Rep = GetComponent<Repairable>();
-        light = Rep.GetComponent<Light2D>();
+        _light = Rep.GetComponent<Light2D>();
 
         repaired = Rep.GetRepairedStatus();
     }
@@ -31,8 +31,8 @@ public class FuseBox : MonoBehaviour {
     }
 
     private void Sprites() {
-        if (!repaired) { SR.sprite = fuseBoxSprites[0]; light.lightCookieSprite = fuseBoxLightSprites[0]; }
-        else { SR.sprite = fuseBoxSprites[1]; light.lightCookieSprite = fuseBoxLightSprites[1]; }
+        if (!repaired) { SR.sprite = fuseBoxSprites[0]; _light.lightCookieSprite = fuseBoxLightSprites[0]; }
+        else { SR.sprite = fuseBoxSprites[1]; _light.lightCookieSprite = fuseBoxLightSprites[1]; }
     }
 
 }

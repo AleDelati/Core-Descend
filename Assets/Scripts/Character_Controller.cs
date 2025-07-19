@@ -115,6 +115,9 @@ public class Character_Controller : MonoBehaviour {
         if (UnityEngine.Input.GetKeyDown(KeyCode.F1)) {
             Debug.Log("Scrap Metal: " + rM.ScrapMetal());
         }
+        if (UnityEngine.Input.GetKeyDown(KeyCode.Escape)) {
+            Application.Quit();
+        }
 
         UpdateSprite();
         // Mueve el robot junto con el elevador mientras se esta controlando al elevador

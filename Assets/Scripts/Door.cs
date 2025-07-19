@@ -3,6 +3,7 @@ using UnityEngine.Rendering.Universal;
 
 public class Door : MonoBehaviour {
 
+    // Editor Config
     [Header("General Config")]
     [SerializeField] bool open = false;
     [SerializeField] float interactRad = 1.5f;
@@ -12,13 +13,16 @@ public class Door : MonoBehaviour {
     [SerializeField] Sprite[] doorSprites;
     [SerializeField] Sprite[] consoleSprites;
 
-    //
-
+    // References
     private SpriteRenderer SR;
     private BoxCollider2D BoxCol;
     private ShadowCaster2D shCast;
     private Repairable Rep;
+    private Light2D interactIndicator;
 
+    // Ext Ref
+
+    // Var
     private bool playerOnReach = false;
     public bool repairable;
     public bool repaired;
@@ -34,6 +38,7 @@ public class Door : MonoBehaviour {
         BoxCol = GetComponent<BoxCollider2D>();
         shCast = GetComponent<ShadowCaster2D>();
         Rep = GetComponent<Repairable>();
+        interactIndicator = transform.Find("Interact Indicator Light").GetComponent<Light2D>();
 
         repairable = Rep.GetRepairable();
         repaired = Rep.GetRepairedStatus();
@@ -53,6 +58,13 @@ public class Door : MonoBehaviour {
             if (playerOnReach && Input.GetKeyDown(KeyCode.E)) {
                 open = !open;
             }
+        }
+
+        //  Controla el indicador de interaccion
+        if (repaired) {
+            interactIndicator.lightCookieSprite = SR.sprite;
+            if(playerOnReach){ interactIndicator.enabled = true; }
+            else { interactIndicator.enabled = false; }
         }
     }
 

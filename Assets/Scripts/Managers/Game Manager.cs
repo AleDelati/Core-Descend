@@ -4,6 +4,7 @@ public class GameManager : MonoBehaviour {
 
     [SerializeField] int targetFPS = 60;
     [SerializeField] int vsync = 1;
+    [SerializeField] int antiAliasing = 0;
 
     //private
 
@@ -11,6 +12,7 @@ public class GameManager : MonoBehaviour {
 
     void Start() {
         QualitySettings.vSyncCount = vsync;
+        QualitySettings.antiAliasing = antiAliasing;
         Application.targetFrameRate = targetFPS;
     }
 

@@ -65,7 +65,6 @@ public class Character_Controller : MonoBehaviour {
     private void Inputs() {
         
         // Mouse
-
         if (UnityEngine.Input.GetMouseButtonDown(0)) {
             mining = true;
         }

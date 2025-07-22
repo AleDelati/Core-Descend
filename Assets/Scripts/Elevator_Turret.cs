@@ -5,8 +5,15 @@ public class Elevator_Turret : MonoBehaviour {
     // Editor Config
     [Tooltip("Limite de Rotacion del Cañon X = Superior Y = Inferior")]
     [SerializeField] Vector2 rotationLimit;
-
+    [Range(1f, 20f)]
+    [SerializeField] float rotationSpeed = 10f;
     [SerializeField] float gizmoRayLenght = 2.0f;
+
+    [Header("Projectile Config")]
+    [SerializeField] GameObject projectile_Prefab;
+    [SerializeField] float shotCD = 0.5f;
+    private GameObject lastProjectile;
+    private float nextShotTime;
 
     // Main Ref
     GameManager GM;
@@ -17,6 +24,7 @@ public class Elevator_Turret : MonoBehaviour {
     // Child Ref
     private GameObject turretCanon;
     private GameObject turretLight;
+    private GameObject projectileSpawnPoint;
 
     // Var
     private Vector3 mouseWorldPos;
@@ -39,6 +47,7 @@ public class Elevator_Turret : MonoBehaviour {
         elevatorC = GameObject.Find("Elevator").GetComponent<Elevator_Controller>();
         turretCanon = transform.Find("Turret Canon").gameObject;
         turretLight = turretCanon.transform.Find("Turret Light").gameObject;
+        projectileSpawnPoint = turretCanon.transform.Find("Projectile Spawn Point").gameObject;
     }
 
     private void Start() {
@@ -56,8 +65,25 @@ public class Elevator_Turret : MonoBehaviour {
             Vector3 localMousePos = transform.InverseTransformPoint(mouseWorldPos);
             float targetAngleLocal = Mathf.Atan2(localMousePos.y, localMousePos.x) * Mathf.Rad2Deg;
             float clampedAngle = Mathf.Clamp(targetAngleLocal, rotationLimit.y, rotationLimit.x);
-            turretCanon.transform.localRotation = Quaternion.Euler(0, 0, clampedAngle);
+            Quaternion targetRotation = Quaternion.Euler(0, 0, clampedAngle);
+            turretCanon.transform.localRotation = Quaternion.Slerp(turretCanon.transform.localRotation, targetRotation, rotationSpeed * Time.deltaTime);
+            //turretCanon.transform.localRotation = Quaternion.Euler(0, 0, clampedAngle);
         }
     }
-        
+
+    public void Shoot() {
+        if (!inverted && mouseWorldPos.x > 0 || inverted && mouseWorldPos.x < 0) {
+            if(Time.time >= nextShotTime) {
+                nextShotTime = Time.time + shotCD;
+                lastProjectile = Instantiate(projectile_Prefab, projectileSpawnPoint.transform.position, turretCanon.transform.rotation);
+                Projectile proyectile = lastProjectile.GetComponent<Projectile>();
+                if (proyectile != null) {
+                    Vector2 targetDir;
+                    if (!inverted) { targetDir = turretCanon.transform.right; } else { targetDir = -turretCanon.transform.right; }
+                    proyectile.SetDirection(targetDir);
+                }
+            }
+        }
+    }
+
 }

@@ -4,6 +4,9 @@ using UnityEngine.Rendering.Universal;
 public class Repairable : MonoBehaviour {
 
     // Editor Config
+    [Header("Debug Options")]
+    [SerializeField] bool debug_Repair = false;
+
     [Header("General Config")]
     [SerializeField] float interactRad = 1.5f;
     [SerializeField] Vector3 interactOffset = Vector3.zero;
@@ -37,20 +40,22 @@ public class Repairable : MonoBehaviour {
         Gizmos.DrawWireSphere(transform.position + interactOffset, interactRad);
     }
 
-    private void Start() {
+    private void Awake() {
         RM = GameObject.Find("Game Manager").GetComponent<Resource_Manager>();
         SR = GetComponent<SpriteRenderer>();
+    }
 
+    private void Start() {
         if (repairIndicator) {
             repairIndicatorLight = transform.Find("Repair Indicator Light").GetComponent<Light2D>();
             repairIndicatorLight.lightCookieSprite = SR.sprite;
         }
-
         if(fixSprites){ SR.sprite = repairSprites[0]; }
     }
 
     private void Update() {
             if (!repaired && repairable) { CheckPlayerInteraction(); }
+            if (!repaired && debug_Repair) { Repair(); }
     }
 
     // 
@@ -62,34 +67,17 @@ public class Repairable : MonoBehaviour {
 
             if (playerOnReach && Input.GetKeyDown(KeyCode.E)) {
                 if (RM.ScrapMetal() >= repair_Scrap) {
-                    Debug.Log("Reparaciones Completadas");
                     RM.SubtractScrapMetal(repair_Scrap);
-                    repaired = true;
-
-                    if (fixSprites) { SR.sprite = repairSprites[1]; }
-
-                    // Si hay objetivos de reparacion, activa la posibilidad de repararlos
-                    for (int i = 0; i < repairTargets.Length; i++) {
-                        if (repairTargets[i] != null) { repairTargets[i].SetRepairable(true); }
-                    }
-                    // Si hay luces vinculadas a la reparacion las activa
-                    for (int i = 0; i < repairLights.Length; i++) {
-                        if (repairLights[i] != null) { repairLights[i].enabled = true; }
-                    }
-
+                    Repair();
                 } else {
                     Debug.Log("No tienes suficiente chatarra para reparar");
                 }
             }
         }
-
-        //  Controla el indicador de interaccion
-        if(repairIndicator && !repaired) {
-            if (playerOnReach) { repairIndicatorLight.enabled = true; }
-            else if (!playerOnReach) { repairIndicatorLight.enabled = false; }
+        // Enciende o apaga el indicador de interaccion de reparacion dependiendo de si el jugador se acerca o se aleja
+        if (repairIndicator && !repaired) {
+            if (playerOnReach) { repairIndicatorLight.enabled = true; } else if (!playerOnReach) { repairIndicatorLight.enabled = false; }
         }
-        if (repairIndicator && repaired) { repairIndicatorLight.enabled = false; }
-
     }
 
     private bool CheckPlayerProximity() {
@@ -99,6 +87,26 @@ public class Repairable : MonoBehaviour {
             }
         }
         return false;
+    }
+
+    private void Repair() {
+        repaired = true;
+
+        if (fixSprites) { SR.sprite = repairSprites[1]; }
+
+        // Si hay objetivos de reparacion, activa la posibilidad de repararlos
+        for (int i = 0; i < repairTargets.Length; i++) {
+            if (repairTargets[i] != null) { repairTargets[i].SetRepairable(true); }
+        }
+        // Si hay luces vinculadas a la reparacion las activa
+        for (int i = 0; i < repairLights.Length; i++) {
+            if (repairLights[i] != null) { repairLights[i].enabled = true; }
+        }
+
+        Debug.Log("Reparaciones Completadas");
+
+        //  Apaga el indicador de interaccion de reparacion al completar las reparaciones
+        if (repairIndicator && repaired) { repairIndicatorLight.enabled = false; }
     }
 
     public bool GetRepairedStatus() {

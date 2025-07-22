@@ -13,6 +13,9 @@ public class Elevator_Controller : MonoBehaviour {
     GameManager GM;
     GameObject Elevator_Energy;
 
+    // Child Ref
+    [SerializeField]Elevator_Turret[] Turrets;
+
     // Var
     Vector3 initialPos;
     int state, lastInput = 0;
@@ -20,10 +23,12 @@ public class Elevator_Controller : MonoBehaviour {
     bool w_Energy = false, w_Turrets = false;
 
     //
-    private void Start() {
+    private void Awake() {
         GM = GameObject.Find("Game Manager").GetComponent<GameManager>();
         Elevator_Energy = GameObject.Find("Elevator | Energy");
+    }
 
+    private void Start() {
         initialPos = transform.position;
     }
 
@@ -38,6 +43,20 @@ public class Elevator_Controller : MonoBehaviour {
 
     private void Input() {
         if (w_Energy) {
+
+            //Mouse
+            if (UnityEngine.Input.GetMouseButtonDown(0)) {
+                
+            }
+            if (UnityEngine.Input.GetMouseButton(0)) {
+                for (int i = 0; i < Turrets.Length; i++) {
+                    Turrets[i].Shoot();
+                }
+            }
+            if (UnityEngine.Input.GetMouseButtonUp(0)) {
+               
+            }
+
             if (UnityEngine.Input.GetKey(KeyCode.W) && state == 1 && transform.position.y < initialPos.y) {
                 transform.position = transform.position + new Vector3(0, 1) * upSpeed * Time.deltaTime;
                 lastInput = 1;

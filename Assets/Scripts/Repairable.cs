@@ -3,6 +3,7 @@ using UnityEngine.Rendering.Universal;
 
 public class Repairable : MonoBehaviour {
 
+    // Editor Config
     [Header("General Config")]
     [SerializeField] float interactRad = 1.5f;
     [SerializeField] Vector3 interactOffset = Vector3.zero;
@@ -22,10 +23,12 @@ public class Repairable : MonoBehaviour {
     [SerializeField] Repairable[] repairTargets;
     [SerializeField] Light2D[] repairLights;
 
+    // Main Ref
     Resource_Manager RM;
     SpriteRenderer SR;
     Light2D repairIndicatorLight;
 
+    //Var
     private bool playerOnReach = false;
 
     //

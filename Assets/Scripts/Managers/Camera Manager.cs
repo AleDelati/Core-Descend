@@ -45,8 +45,8 @@ public class CameraManager : MonoBehaviour {
             transform.GetComponent<Camera>().orthographicSize = elevatorZoom;
 
             // Offset de la camara dependiendo de la direccion de movimiento del elevador
-            if (player.GetComponent<Character_Controller>().GetMouseScreenPos().y >= 0.90) { currentOffset = new Vector2(0, elevatorOffset); }
-            else if(player.GetComponent<Character_Controller>().GetMouseScreenPos().y <= 0.30) { currentOffset = new Vector2(0, -elevatorOffset); }
+            if (GM.GetMouseViewportPos().y >= 0.95) { currentOffset = new Vector2(0, elevatorOffset); }
+            else if(GM.GetMouseViewportPos().y <= 0.90) { currentOffset = new Vector2(0, -elevatorOffset); }
         }
 
         transform.SetPositionAndRotation(new Vector3(target.transform.position.x + currentOffset.x, target.transform.position.y + currentOffset.y, -10), Quaternion.identity);

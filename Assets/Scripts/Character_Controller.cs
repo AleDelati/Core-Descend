@@ -22,7 +22,7 @@ public class Character_Controller : MonoBehaviour {
     SpriteRenderer sR;
     Animator animator;
     
-    // External Ref
+    // Ext Ref
     GameObject elevator;
     Elevator_Controller elevatorC;
 
@@ -31,7 +31,6 @@ public class Character_Controller : MonoBehaviour {
 
     // Var
     Vector3 initialPos;
-    Vector3 mouseWorldPos; Vector3 mouseScreenPos;
     int state = 0;  // 0 - Normal | 1 - Elevador    | 2 - Interior
     int lastInput = 0;
     bool mining = false;
@@ -66,7 +65,6 @@ public class Character_Controller : MonoBehaviour {
     private void Inputs() {
         
         // Mouse
-        UpdateMouseInputs();
 
         if (UnityEngine.Input.GetMouseButtonDown(0)) {
             mining = true;
@@ -160,7 +158,7 @@ public class Character_Controller : MonoBehaviour {
 
     // Verifica el click sobre un bloque destruible y si esta dentro del rango de mineria
     private void MiningDetection() {
-        RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, Vector2.zero);
+        RaycastHit2D hit = Physics2D.Raycast(GM.GetMouseWorldPos(), Vector2.zero);
         if (hit.collider != null && hit.collider.tag == "Scrap") {
             foreach (Collider2D collider in Physics2D.OverlapCircleAll(transform.position, miningRange)) {
                 if (collider.gameObject == hit.collider.gameObject) {
@@ -199,22 +197,6 @@ public class Character_Controller : MonoBehaviour {
     private void ToggleCharacter(bool active) {
         sR.enabled = active;
         robot_Light.GetComponent<Light2D>().enabled = active;
-    }
-
-    //  Mouse
-    private void UpdateMouseInputs() {
-        mouseWorldPos = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition); mouseWorldPos.z = 0;
-        mouseScreenPos = Camera.main.ScreenToViewportPoint(UnityEngine.Input.mousePosition); mouseScreenPos.z = 0;
-        //Debug.Log("Current mouse world position " + mouseWorldPos);
-        //Debug.Log("Current mouse screen position" + mouseScreenPos);
-    }
-
-    public Vector3 GetMouseWorldPos() {
-        return mouseWorldPos;
-    }
-
-    public Vector3 GetMouseScreenPos() {
-        return mouseScreenPos;
     }
 
 }

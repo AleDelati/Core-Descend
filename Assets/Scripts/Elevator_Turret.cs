@@ -67,7 +67,6 @@ public class Elevator_Turret : MonoBehaviour {
             float clampedAngle = Mathf.Clamp(targetAngleLocal, rotationLimit.y, rotationLimit.x);
             Quaternion targetRotation = Quaternion.Euler(0, 0, clampedAngle);
             turretCanon.transform.localRotation = Quaternion.Slerp(turretCanon.transform.localRotation, targetRotation, rotationSpeed * Time.deltaTime);
-            //turretCanon.transform.localRotation = Quaternion.Euler(0, 0, clampedAngle);
         }
     }
 

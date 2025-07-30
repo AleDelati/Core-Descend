@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - Scrap
+  - Elevator
+  - Elevator Turret
   layers:
   - Default
   - TransparentFX

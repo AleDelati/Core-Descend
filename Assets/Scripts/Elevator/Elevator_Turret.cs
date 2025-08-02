@@ -3,6 +3,7 @@ using UnityEngine;
 public class Elevator_Turret : MonoBehaviour {
 
     // Editor Config
+    [Header("Turret  Config")]
     [Tooltip("Limite de Rotacion del Cañon X = Superior Y = Inferior")]
     [SerializeField] Vector2 rotationLimit;
     [Range(1f, 20f)]
@@ -32,14 +33,16 @@ public class Elevator_Turret : MonoBehaviour {
 
     //
     private void OnDrawGizmosSelected() {
-        if (!inverted) {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawRay(turretCanon.transform.position, turretCanon.transform.right * gizmoRayLenght);
-        } else {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawRay(turretCanon.transform.position, -turretCanon.transform.right * gizmoRayLenght);
+        if (turretCanon != null) {
+            if (!inverted) {
+                Gizmos.color = Color.green;
+                Gizmos.DrawRay(turretCanon.transform.position, turretCanon.transform.right * gizmoRayLenght);
+            } else {
+                Gizmos.color = Color.green;
+                Gizmos.DrawRay(turretCanon.transform.position, -turretCanon.transform.right * gizmoRayLenght);
+            }
         }
-        
+
     }
 
     private void Awake() {
@@ -70,6 +73,7 @@ public class Elevator_Turret : MonoBehaviour {
         }
     }
 
+    //
     public void Shoot() {
         if (!inverted && mouseWorldPos.x > 0 || inverted && mouseWorldPos.x < 0) {
             if(Time.time >= nextShotTime) {
@@ -84,5 +88,5 @@ public class Elevator_Turret : MonoBehaviour {
             }
         }
     }
-
+    // ----------------------------------------------------------------------------------------------------
 }

@@ -1,11 +1,16 @@
+using System;
 using UnityEngine;
 
 public class Elevator_Controller : MonoBehaviour {
 
     // Editor Config
-    [SerializeField] float downSpeed = 4;
-    [SerializeField] float upSpeed = 3;
+    [Tooltip("Velocidad del Elevador X=Up | Y=Down")]
+    [SerializeField] Vector2 elevatorSpeed = new Vector2(3, 4);
+    [Tooltip("Radio en el que las torretas enemigas seran alertadas si las torretas del elevador disparan")]
+    [Range(0f, 50f)]
+    [SerializeField] float alertRad = 45;
 
+    [Header("Radio de deteccion del player (Para subir al elevador)")]
     [SerializeField] Vector3 proximityOffset;
     [SerializeField] float proximityRadius = 4;
 
@@ -21,6 +26,9 @@ public class Elevator_Controller : MonoBehaviour {
     int state, lastInput = 0;
     bool playerOnReach = false;
     bool w_Energy = false, w_Turrets = false;
+
+    // Events
+    public static event Action onElevatorTriggerAlarm;    
 
     //
     private void Awake() {
@@ -46,7 +54,7 @@ public class Elevator_Controller : MonoBehaviour {
 
             //Mouse
             if (UnityEngine.Input.GetMouseButtonDown(0)) {
-                
+                onElevatorTriggerAlarm?.Invoke();
             }
             if (UnityEngine.Input.GetMouseButton(0)) {
                 for (int i = 0; i < Turrets.Length; i++) {
@@ -54,23 +62,28 @@ public class Elevator_Controller : MonoBehaviour {
                 }
             }
             if (UnityEngine.Input.GetMouseButtonUp(0)) {
-               
+                onElevatorTriggerAlarm?.Invoke();
             }
 
             if (UnityEngine.Input.GetKey(KeyCode.W) && state == 1 && transform.position.y < initialPos.y) {
-                transform.position = transform.position + new Vector3(0, 1) * upSpeed * Time.deltaTime;
+                transform.position = transform.position + new Vector3(0, 1) * elevatorSpeed.x * Time.deltaTime;
                 lastInput = 1;
             }
             if (UnityEngine.Input.GetKey(KeyCode.S) && state == 1) {
-                transform.position = transform.position + new Vector3(0, -1) * downSpeed * Time.deltaTime;
+                transform.position = transform.position + new Vector3(0, -1) * elevatorSpeed.y * Time.deltaTime;
                 lastInput = -1;
             }
         }
     }
 
     private void OnDrawGizmosSelected() {
-        Gizmos.color = Color.yellow;
+        // Radio de deteccion del jugador ( Para subir al elevador )
+        Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position + proximityOffset, proximityRadius);
+
+        // Radio en el que si se disparan las torretas del elevador, se alertara a las torretas enemigas
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, alertRad);
     }
 
     // Checks

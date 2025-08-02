@@ -33,16 +33,16 @@ public class Impact_Decal : MonoBehaviour {
     private void UpdateSprites() {
         if(Time.time >= startTime + 1 && Time.time <= startTime + 3) {
             SR.sprite = sprites[1];
-            _light.intensity = 20;
+            _light.intensity = _light.intensity / 2;
         }else if(Time.time >= startTime + 3 && Time.time <= startTime + 6) {
             SR.sprite = sprites[2];
-            _light.intensity = 10;
+            _light.intensity = _light.intensity / 2;
         } else if (Time.time >= startTime + 6 && Time.time <= startTime + 8) {
             SR.sprite = sprites[3];
-            _light.intensity = 5;
+            _light.intensity = _light.intensity / 2;
         } else if (Time.time >= startTime + 8) {
             SR.sprite = sprites[4];
-            _light.intensity = 2.5f;
+            _light.intensity = _light.intensity / 2;
         }
     }
 

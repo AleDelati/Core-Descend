@@ -1,5 +1,7 @@
 using UnityEngine;
 
+public enum projectileT { Player, Enemy }
+
 public class Projectile : MonoBehaviour {
 
     // Editor Config
@@ -7,6 +9,7 @@ public class Projectile : MonoBehaviour {
     [SerializeField] float speed = 10.0f;
     [SerializeField] float damage = 1.0f;
     [SerializeField] float lifeTime = 3.0f;
+    [SerializeField] projectileT projectileType;
 
     [SerializeField] GameObject impact_Prefab;
     private GameObject lastInstance;
@@ -32,6 +35,27 @@ public class Projectile : MonoBehaviour {
             lastInstance = Instantiate(impact_Prefab, new Vector2(Mathf.Round(transform.position.x) + 0.35f, transform.position.y), Quaternion.identity);
             lastInstance.GetComponent<Impact_Decal>().FlipSprite();
         }
+
+        // Si los proyectiles impactan el elevador, a los decals de impacto se les asigna el elevador como parent para que sigan su movimiento
+        if(collision.CompareTag("Elevator") || collision.CompareTag("Elevator Turret")) { lastInstance.transform.parent = collision.gameObject.transform; }
+        
+        // Verifica la logica de impactos del proyectil dependiendo de si fue disparado por le jugador o los enemigos
+        switch (projectileType) {
+            case projectileT.Player:
+                if (collision.CompareTag("Enemy Turret")) {
+                    collision.GetComponent<Health>().GetHit(damage);
+                }
+                break;
+            case projectileT.Enemy:
+                if (collision.CompareTag("Elevator") || collision.CompareTag("Elevator Turret")) {
+                    //collision.GetComponent<Health>().GetHit(damage);
+                }
+                break;
+            default:
+                Debug.LogWarning("Tipo de proyectil desconocido");
+                break;
+        }
+
         Destroy(gameObject);
     }
 

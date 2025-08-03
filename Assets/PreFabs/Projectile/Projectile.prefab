@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4147717617024416972}
   - component: {fileID: 5136349743884538005}
   - component: {fileID: 2493460774821887262}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ MonoBehaviour:
   speed: 40
   damage: 1
   lifeTime: 2
-  projectileType: Player
+  projectileType: 0
   impact_Prefab: {fileID: 8193386938200120081, guid: edf22655181509e4b86752afcb20f305, type: 3}
 --- !u!114 &2493460774821887262
 MonoBehaviour:

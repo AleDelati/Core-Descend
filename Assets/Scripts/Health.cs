@@ -22,4 +22,13 @@ public class Health : MonoBehaviour {
         if (HP < 0) {  HP = 0; }
     }
 
+    public void RepairHP(float repair) {
+        HP += repair;
+        if (HP > maxHP) { HP = maxHP; }
+    }
+
+    public void RestoreMaxHP() {
+        HP = maxHP;
+    }
+
 }

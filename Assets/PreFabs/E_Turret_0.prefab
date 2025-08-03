@@ -156,7 +156,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.4, y: 0}
+  m_Offset: {x: -0.25, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -166,7 +166,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.25, y: 1.2}
+  m_Size: {x: 0.5, y: 1.2}
   m_EdgeRadius: 0
 --- !u!114 &860188966902841566
 MonoBehaviour:
@@ -196,14 +196,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
+  aimRaycastLenght: 50
   baseDetectionRange: 20
   alertedRange: 50
   alertTime: 10
   rotationLimit: {x: 90, y: -90}
   rotationSpeed: 10
-  gizmoRayLenght: 30
   projectile_Prefab: {fileID: 1295323297133349755, guid: 2957d2658c736874eabd5646914438b7, type: 3}
-  shotCD: 0.5
+  shotCD: 0.15
+  projectileSpreadAngle: 6
   inverted: 0
   detectionRange: 0
   alertT: 0

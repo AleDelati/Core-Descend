@@ -5,7 +5,8 @@ public class Enemy_Turret : MonoBehaviour {
 
     // Editor Config
     [Header("Turret IA")]
-    [SerializeField] GameObject target = null;
+    public GameObject target = null;
+    [SerializeField] float aimRaycastLenght = 50.0f;
     [SerializeField] float baseDetectionRange = 20;
 
     [Tooltip("El rango que tendra la torreta mientras este alertada")]
@@ -19,16 +20,19 @@ public class Enemy_Turret : MonoBehaviour {
     
     [Range(1f, 20f)]
     [SerializeField] float rotationSpeed = 10f;
-    [SerializeField] float gizmoRayLenght = 2.0f;
 
     [Header("Projectile Config")]
     [SerializeField] GameObject projectile_Prefab;
     [SerializeField] float shotCD = 0.5f;
+    [Tooltip("Un valor (Angulo) utilizado para añadir dispersion a los proyectiles disparados.")]
+    [Range(0f, 15f)]
+    [SerializeField] float projectileSpreadAngle = 3f;
     private GameObject lastProjectile;
     private float nextShotTime;
 
     // Main Ref
     GameManager GM;
+    Event_Manager Evt_M;
 
     // Self Ref
     Health health;
@@ -44,21 +48,13 @@ public class Enemy_Turret : MonoBehaviour {
     public bool inverted;
     private bool disabled = false;
     public float detectionRange, alertT;
+    private LayerMask raycastIgnore;
 
     string l_NoTargetColor = "#FFFFFFFF", l_TargetColor = "#C83232FF";
 
     //
     private void OnDrawGizmosSelected() {
-        if(turretCanon!= null) {
-            if (!inverted) {
-                Gizmos.color = Color.red;
-                Gizmos.DrawRay(turretCanon.transform.position, turretCanon.transform.right * gizmoRayLenght);
-            } else {
-                Gizmos.color = Color.red;
-                Gizmos.DrawRay(turretCanon.transform.position, -turretCanon.transform.right * gizmoRayLenght);
-            }
-        }
-
+        // Area de deteccion
         if(detectionRange == 0) {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, baseDetectionRange);
@@ -71,10 +67,13 @@ public class Enemy_Turret : MonoBehaviour {
 
     private void Awake() {
         GM = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        Evt_M = GameObject.Find("Game Manager").GetComponent<Event_Manager>();
         health = GetComponent<Health>();
         turretCanon = transform.Find("Turret Canon").gameObject;
         turretLight = turretCanon.transform.Find("Turret Light").gameObject;
         projectileSpawnPoint = turretCanon.transform.Find("Projectile Spawn Point").gameObject;
+
+        raycastIgnore = ~0; raycastIgnore &= ~(LayerMask.NameToLayer("Ignore Raycast"));
     }
 
     private void Start() {
@@ -92,18 +91,24 @@ public class Enemy_Turret : MonoBehaviour {
     }
 
     private void OnEnable() {
-        Elevator_Controller.onElevatorTriggerAlarm += AlertTurret;
+        Event_Manager.onElevatorTriggerAlarm += AlertTurret;
     }
 
     private void OnDisable() {
-        Elevator_Controller.onElevatorTriggerAlarm -= AlertTurret;
+        Event_Manager.onElevatorTriggerAlarm -= AlertTurret;
     }
     // ----------------------------------------------------------------------------------------------------
 
     //
     private void UpdateCanon() {
         if (target != null) {
-            Vector3 targetPos = target.GetComponent<Collider2D>().bounds.center; targetPos.z = transform.position.z;
+            //Asigna la posicion del target dependiendo de si esta mas arriba o mas abajo en Y, para mejorar la precision
+            Vector3 targetPos; float targetDistance = target.transform.position.y - transform.position.y;
+            //Debug.Log("Target Distance " + targetDistance);
+            if (targetDistance < -5) { targetPos = target.GetComponent<Collider2D>().bounds.max; targetPos.z = transform.position.z; }
+            else if (targetDistance >= -5 && targetDistance <= 5) { targetPos = target.GetComponent<Collider2D>().bounds.center; targetPos.z = transform.position.z; }
+            else { targetPos = target.GetComponent<Collider2D>().bounds.min; targetPos.z = transform.position.z; }
+
             Vector3 localMousePos = transform.InverseTransformPoint(targetPos);
             float targetAngleLocal = Mathf.Atan2(localMousePos.y, localMousePos.x) * Mathf.Rad2Deg;
             float clampedAngle = Mathf.Clamp(targetAngleLocal, rotationLimit.y, rotationLimit.x);
@@ -111,11 +116,11 @@ public class Enemy_Turret : MonoBehaviour {
             turretCanon.transform.localRotation = Quaternion.Slerp(turretCanon.transform.localRotation, targetRotation, rotationSpeed * Time.deltaTime);
             Shoot();
         } else {    // Torreta sin objetivo
-            Debug.Log("La torreta no tiene objetivos");
+            //Debug.Log("La torreta no tiene objetivos");
         } 
     }
 
-    private void CheckTargets() {   //Añadir raycasts
+    private void CheckTargets() {
 
         // Cambia el color de las luces de la torreta dependiendo de si tiene un objetivo o no
         Color parsedColor;
@@ -171,22 +176,36 @@ public class Enemy_Turret : MonoBehaviour {
         }
     }
 
-    public void Shoot() {
+    private void Shoot() {
         // Crea un raycast en la direccion que esta apuntando la torreta
         RaycastHit2D hit;
-        if(!inverted) { hit = Physics2D.Raycast(projectileSpawnPoint.transform.position, turretCanon.transform.right); }
-        else { hit = Physics2D.Raycast(projectileSpawnPoint.transform.position, -turretCanon.transform.right); }
-        
+        if (!inverted) {
+            hit = Physics2D.Raycast(projectileSpawnPoint.transform.position, turretCanon.transform.right * aimRaycastLenght, aimRaycastLenght, raycastIgnore);
+            Debug.DrawRay(projectileSpawnPoint.transform.position, turretCanon.transform.right * aimRaycastLenght, hit.collider != null ? Color.red : Color.green);
+        } else {
+            hit = Physics2D.Raycast(projectileSpawnPoint.transform.position, -turretCanon.transform.right * aimRaycastLenght, aimRaycastLenght, raycastIgnore);
+            Debug.DrawRay(projectileSpawnPoint.transform.position, -turretCanon.transform.right * aimRaycastLenght, hit.collider != null ? Color.red : Color.green);
+        }
+
         // Verifica que el raycast este impactando con el enemigo antes de disparar
-        if (hit.collider.CompareTag("Elevator") || hit.collider.CompareTag("Elevator Turret")) {
-            if (Time.time >= nextShotTime) {
-                nextShotTime = Time.time + shotCD;
-                lastProjectile = Instantiate(projectile_Prefab, projectileSpawnPoint.transform.position, turretCanon.transform.rotation);
-                Projectile proyectile = lastProjectile.GetComponent<Projectile>();
-                if (proyectile != null) {
-                    Vector2 targetDir;
-                    if (!inverted) { targetDir = turretCanon.transform.right; } else { targetDir = -turretCanon.transform.right; }
-                    proyectile.SetDirection(targetDir);
+        if (hit.collider != null) {
+            if (hit.collider.CompareTag("Elevator") || hit.collider.CompareTag("Elevator Turret")) {
+                if (Time.time >= nextShotTime) {
+                    nextShotTime = Time.time + shotCD;
+                    lastProjectile = Instantiate(projectile_Prefab, projectileSpawnPoint.transform.position, turretCanon.transform.rotation);
+                    Projectile proyectile = lastProjectile.GetComponent<Projectile>();
+                    if (proyectile != null) {
+                        Vector2 targetDir;
+                        if (!inverted) { targetDir = turretCanon.transform.right; } else { targetDir = -turretCanon.transform.right; }
+
+                        // Crea un angulo aleatorio para añadir el efecto de dispersion a la trayectoria final de la bala
+                        float randomAngle = Random.Range(-projectileSpreadAngle, projectileSpreadAngle);
+                        Quaternion spreadRotation = Quaternion.Euler(0, 0, randomAngle);
+                        targetDir = spreadRotation * targetDir;
+
+                        proyectile.SetDirection(targetDir);
+                    }
+                    Evt_M.OnElevatorTriggerAlarm();
                 }
             }
         }
@@ -197,14 +216,14 @@ public class Enemy_Turret : MonoBehaviour {
     private void AlertTurret() {
         detectionRange = alertedRange;
         alertT = Time.time + alertTime;
-        Debug.Log("La torreta " + gameObject.name + " esta en estado de alerta.");
+        //Debug.Log("La torreta " + gameObject.name + " esta en estado de alerta.");
     }
 
     // Gestiona el tiempo que la torreta permanece alerta
     private void AlertCD() {
         if(Time.time > alertT) { 
             detectionRange = baseDetectionRange;
-            Debug.Log("La torreta " + gameObject.name + " ya no esta en estado de alerta.");
+            //Debug.Log("La torreta " + gameObject.name + " ya no esta en estado de alerta.");
         }
     }
     // ----------------------------------------------------------------------------------------------------
@@ -221,4 +240,6 @@ public class Enemy_Turret : MonoBehaviour {
         disabled = true;
     }
     // ----------------------------------------------------------------------------------------------------
+
+    public bool GetState() { return disabled; }
 }

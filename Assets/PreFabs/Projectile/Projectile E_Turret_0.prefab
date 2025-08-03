@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4147717617024416972}
   - component: {fileID: 5136349743884538005}
   - component: {fileID: 2493460774821887262}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Projectile E_Turret_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -47,8 +47,8 @@ public class Projectile : MonoBehaviour {
                 }
                 break;
             case projectileT.Enemy:
-                if (collision.CompareTag("Elevator") || collision.CompareTag("Elevator Turret")) {
-                    //collision.GetComponent<Health>().GetHit(damage);
+                if (collision.CompareTag("Elevator Turret")) {
+                    collision.GetComponent<Health>().GetHit(damage);
                 }
                 break;
             default:

@@ -26,9 +26,7 @@ public class Elevator_Controller : MonoBehaviour {
     int state, lastInput = 0;
     bool playerOnReach = false;
     bool w_Energy = false, w_Turrets = false;
-
-    // Events
-    public static event Action onElevatorTriggerAlarm;    
+    // ----------------------------------------------------------------------------------------------------
 
     //
     private void Awake() {
@@ -48,21 +46,23 @@ public class Elevator_Controller : MonoBehaviour {
         Update_StatusCheck();
         Update_ProximityCheck();
     }
+    // ----------------------------------------------------------------------------------------------------
 
+    //
     private void Input() {
         if (w_Energy) {
 
             //Mouse
             if (UnityEngine.Input.GetMouseButtonDown(0)) {
-                onElevatorTriggerAlarm?.Invoke();
+
             }
             if (UnityEngine.Input.GetMouseButton(0)) {
                 for (int i = 0; i < Turrets.Length; i++) {
-                    Turrets[i].Shoot();
+                    Turrets[i].Shoot(true);
                 }
             }
             if (UnityEngine.Input.GetMouseButtonUp(0)) {
-                onElevatorTriggerAlarm?.Invoke();
+
             }
 
             if (UnityEngine.Input.GetKey(KeyCode.W) && state == 1 && transform.position.y < initialPos.y) {

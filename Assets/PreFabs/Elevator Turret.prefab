@@ -215,6 +215,7 @@ GameObject:
   - component: {fileID: 6984470737840934817}
   - component: {fileID: 3391550156673110385}
   - component: {fileID: 6893763254624487633}
+  - component: {fileID: 1326338847724680643}
   - component: {fileID: 8651802214899096418}
   m_Layer: 0
   m_Name: Elevator Turret
@@ -340,6 +341,21 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.25, y: 1.2}
   m_EdgeRadius: 0
+--- !u!114 &1326338847724680643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8914239438104226613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 038d5c57eb6c59944a0379dfee44d3db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP: 50
+  initialHP: 50
+  HP: 0
 --- !u!114 &8651802214899096418
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -352,9 +368,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f6a29d0d6180df44b360d498bf839ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  baseDetectionRange: {x: 47, y: 40, z: 0}
+  detectionOffset: {x: 22, y: 0, z: 0}
+  alertedRange: {x: 47, y: 80, z: 0}
+  alertTime: 10
   rotationLimit: {x: 40, y: -90}
   rotationSpeed: 1
   gizmoRayLenght: 30
   projectile_Prefab: {fileID: 1295323297133349755, guid: dfb1847af08d66d49af8670ce30091f2, type: 3}
   shotCD: 0.05
-  inverted: 0
+  projectileSpreadAngle: 3

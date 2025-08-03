@@ -23,8 +23,13 @@ public class Repairable : MonoBehaviour {
     [Header("Repair resources")]
     [SerializeField] int repair_Scrap;
 
+    [Header("Repair Objectives")]
+    [Tooltip("Activa la posibilidad de reparacion de los objetos asignados")]
     [SerializeField] Repairable[] repairTargets;
+    [Tooltip("Repara las luces asignadas")]
     [SerializeField] Light2D[] repairLights;
+    [Tooltip("Repara las torretas del elevador asignadas")]
+    [SerializeField] Elevator_Turret[] repairTurrets;
 
     // Main Ref
     Resource_Manager RM;
@@ -33,6 +38,7 @@ public class Repairable : MonoBehaviour {
 
     //Var
     private bool playerOnReach = false;
+    // ----------------------------------------------------------------------------------------------------
 
     //
     private void OnDrawGizmosSelected() {
@@ -57,6 +63,7 @@ public class Repairable : MonoBehaviour {
             if (!repaired && repairable) { CheckPlayerInteraction(); }
             if (!repaired && debug_Repair) { Repair(); }
     }
+    // ----------------------------------------------------------------------------------------------------
 
     // 
     private void CheckPlayerInteraction() {
@@ -102,11 +109,25 @@ public class Repairable : MonoBehaviour {
         for (int i = 0; i < repairLights.Length; i++) {
             if (repairLights[i] != null) { repairLights[i].enabled = true; }
         }
+        // Si hay torretas del elevador vinculadas las repara
+        for (int i = 0; i < repairTurrets.Length; i++) {
+            if (repairTurrets[i] != null) { repairTurrets[i].GetComponent<Elevator_Turret>().EnableTurret(); }
+        }
+
 
         Debug.Log("Reparaciones Completadas");
 
         //  Apaga el indicador de interaccion de reparacion al completar las reparaciones
         if (repairIndicator && repaired) { repairIndicatorLight.enabled = false; }
+    }
+
+    //
+    public void SetRepaired(bool status) {
+        repaired = status;
+        if (fixSprites) {
+            if(status == true) { SR.sprite = repairSprites[1]; }
+            else{ SR.sprite = repairSprites[0]; }
+        }
     }
 
     public bool GetRepairedStatus() {
@@ -120,5 +141,5 @@ public class Repairable : MonoBehaviour {
     public bool GetRepairable() {
         return repairable;
     }
-
+    // ----------------------------------------------------------------------------------------------------
 }

@@ -43,6 +43,8 @@ public class Door : MonoBehaviour {
         repairable = Rep.GetRepairable();
         repaired = Rep.GetRepairedStatus();
         
+        if(open) { shCast.trimEdge = 0.50f; }
+
     }
 
     private void Update() {

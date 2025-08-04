@@ -4,6 +4,9 @@ using UnityEngine;
 public class Elevator_Controller : MonoBehaviour {
 
     // Editor Config
+    [Header("Elevator Config")]
+    [Tooltip("Establece los limites de movimiento del elevador X=Inferior | Y=Superior")]
+    [SerializeField] Vector2 elevatorLimits;
     [Tooltip("Velocidad del Elevador X=Up | Y=Down")]
     [SerializeField] Vector2 elevatorSpeed = new Vector2(3, 4);
     [Tooltip("Radio en el que las torretas enemigas seran alertadas si las torretas del elevador disparan")]
@@ -22,7 +25,6 @@ public class Elevator_Controller : MonoBehaviour {
     [SerializeField]Elevator_Turret[] Turrets;
 
     // Var
-    Vector3 initialPos;
     int state, lastInput = 0;
     bool playerOnReach = false;
     bool w_Energy = false, w_Turrets = false;
@@ -35,11 +37,11 @@ public class Elevator_Controller : MonoBehaviour {
     }
 
     private void Start() {
-        initialPos = transform.position;
+        
     }
 
     private void Update() {
-        state = GM.GetState();
+        state = GM.GetPlayerState();
         if (state == 0) { lastInput = 0; }
         
         Input();
@@ -50,7 +52,7 @@ public class Elevator_Controller : MonoBehaviour {
 
     //
     private void Input() {
-        if (w_Energy) {
+        if (w_Energy && state == 1) {
 
             //Mouse
             if (UnityEngine.Input.GetMouseButtonDown(0)) {
@@ -65,11 +67,11 @@ public class Elevator_Controller : MonoBehaviour {
 
             }
 
-            if (UnityEngine.Input.GetKey(KeyCode.W) && state == 1 && transform.position.y < initialPos.y) {
+            if (UnityEngine.Input.GetKey(KeyCode.W) && transform.position.y < elevatorLimits.y) {
                 transform.position = transform.position + new Vector3(0, 1) * elevatorSpeed.x * Time.deltaTime;
                 lastInput = 1;
             }
-            if (UnityEngine.Input.GetKey(KeyCode.S) && state == 1) {
+            if (UnityEngine.Input.GetKey(KeyCode.S) && transform.position.y > elevatorLimits.x) {
                 transform.position = transform.position + new Vector3(0, -1) * elevatorSpeed.y * Time.deltaTime;
                 lastInput = -1;
             }

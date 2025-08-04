@@ -28,10 +28,10 @@ public class Repairable : MonoBehaviour {
     [SerializeField] Repairable[] repairTargets;
     [Tooltip("Repara las luces asignadas")]
     [SerializeField] Light2D[] repairLights;
-    [Tooltip("Repara las torretas del elevador asignadas")]
-    [SerializeField] Elevator_Turret[] repairTurrets;
 
     // Main Ref
+    GameManager GM;
+    UI_Manager UI_M;
     Resource_Manager RM;
     SpriteRenderer SR;
     Light2D repairIndicatorLight;
@@ -47,6 +47,8 @@ public class Repairable : MonoBehaviour {
     }
 
     private void Awake() {
+        GM = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        UI_M = GameObject.Find("Game Manager").GetComponent<UI_Manager>();
         RM = GameObject.Find("Game Manager").GetComponent<Resource_Manager>();
         SR = GetComponent<SpriteRenderer>();
     }
@@ -77,7 +79,8 @@ public class Repairable : MonoBehaviour {
                     RM.SubtractScrapMetal(repair_Scrap);
                     Repair();
                 } else {
-                    Debug.Log("No tienes suficiente chatarra para reparar");
+                    UI_M.SetNotificationText("No tengo suficiente chatarra para reparar", 2);
+                    //Debug.Log("No tienes suficiente chatarra para reparar");
                 }
             }
         }
@@ -109,13 +112,9 @@ public class Repairable : MonoBehaviour {
         for (int i = 0; i < repairLights.Length; i++) {
             if (repairLights[i] != null) { repairLights[i].enabled = true; }
         }
-        // Si hay torretas del elevador vinculadas las repara
-        for (int i = 0; i < repairTurrets.Length; i++) {
-            if (repairTurrets[i] != null) { repairTurrets[i].GetComponent<Elevator_Turret>().EnableTurret(); }
-        }
 
-
-        Debug.Log("Reparaciones Completadas");
+        UI_M.SetNotificationText("Reparaciones completadas", 1);
+        //Debug.Log("Reparaciones Completadas");
 
         //  Apaga el indicador de interaccion de reparacion al completar las reparaciones
         if (repairIndicator && repaired) { repairIndicatorLight.enabled = false; }

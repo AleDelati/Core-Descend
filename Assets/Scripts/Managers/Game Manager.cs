@@ -7,9 +7,13 @@ public class GameManager : MonoBehaviour {
     [SerializeField] int vsync = 1;
     [SerializeField] int antiAliasing = 0;
 
+    // Player Skills
+    private bool canRepairTurrets = false;
+
     // Var
     Vector3 mouseWorldPos, mouseViewportPos;
-    private int state = 0;  // 0 - Normal | 1 - Elevador | 2 - Interior del Elevador
+    private int playerState = 0;  // 0 - Normal | 1 - Elevador | 2 - Interior del Elevador
+    // ----------------------------------------------------------------------------------------------------
 
     //
     void Start() {
@@ -21,6 +25,7 @@ public class GameManager : MonoBehaviour {
     void Update() {
         UpdateMousePos();
     }
+    // ----------------------------------------------------------------------------------------------------
 
     // Mouse
     private void UpdateMousePos() {
@@ -37,14 +42,27 @@ public class GameManager : MonoBehaviour {
     public Vector3 GetMouseViewportPos() {
         return mouseViewportPos;
     }
+    // ----------------------------------------------------------------------------------------------------
 
     //
-    public void SetState(int _state) {
-        state = _state;
+    public void SetPlayerState(int _state) {
+        playerState = _state;
     }
 
-    public int GetState() {
-        return state;
+    public int GetPlayerState() {
+        return playerState;
     }
+    // ----------------------------------------------------------------------------------------------------
+
+    //
+    public void SetPlayerSkillStatus(string skillName ,bool state) {
+        if(skillName == "canRepairTurrets"){ canRepairTurrets = state; }
+    }
+
+    public bool GetPlayerSkillStatus(string skillName) {
+        if(skillName == "canRepairTurrets"){ return canRepairTurrets; }
+        else { return false; }
+    }
+    // ----------------------------------------------------------------------------------------------------
 
 }

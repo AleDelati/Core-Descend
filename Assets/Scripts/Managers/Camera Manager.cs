@@ -27,7 +27,7 @@ public class CameraManager : MonoBehaviour {
     }
 
     private void Update() {
-        state = GM.GetState();
+        state = GM.GetPlayerState();
 
         UpdateCamera();
     }

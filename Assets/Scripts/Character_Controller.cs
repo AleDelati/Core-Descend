@@ -135,7 +135,7 @@ public class Character_Controller : MonoBehaviour {
             Debug.Log("Saliendo del Elevador");
             ToggleCharacter(true);
         }
-        GM.SetState(state);
+        GM.SetPlayerState(state);
     }
 
     private void EnterElevator() {
@@ -152,7 +152,7 @@ public class Character_Controller : MonoBehaviour {
 
             ToggleCharacter(false);
         }
-        GM.SetState(state);
+        GM.SetPlayerState(state);
     }
 
     // Verifica el click sobre un bloque destruible y si esta dentro del rango de mineria

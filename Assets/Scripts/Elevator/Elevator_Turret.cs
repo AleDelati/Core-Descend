@@ -38,9 +38,6 @@ public class Elevator_Turret : MonoBehaviour {
     // Self Ref
     Health health;
 
-    // Ext Ref
-    Elevator_Controller elevatorC;
-
     // Child Ref
     private GameObject turretCanon;
     private GameObject turretLight;
@@ -71,7 +68,6 @@ public class Elevator_Turret : MonoBehaviour {
         GM = GameObject.Find("Game Manager").GetComponent<GameManager>();
         Evt_M = GameObject.Find("Game Manager").GetComponent<Event_Manager>();
         health = GetComponent<Health>();
-        elevatorC = GameObject.Find("Elevator").GetComponent<Elevator_Controller>();
         turretCanon = transform.Find("Turret Canon").gameObject;
         turretLight = turretCanon.transform.Find("Turret Light").gameObject;
         projectileSpawnPoint = turretCanon.transform.Find("Projectile Spawn Point").gameObject;
@@ -82,7 +78,7 @@ public class Elevator_Turret : MonoBehaviour {
     private void Start() {
         inverted = transform.lossyScale.x < 0;
         if (!inverted) { turretLight.transform.rotation = new Quaternion(0, 0, -0.707106829f, 0.707106829f); } else { turretLight.transform.rotation = new Quaternion(0, 0, 0.707106829f, 0.707106829f); }
-        if (turretPanel.GetComponent<Repairable>().GetRepairedStatus() == false) { DisableTurret(); }
+        if (turretPanel.GetComponent<Turret_Panel>().GetRepairedStatus() == false) { DisableTurret(); }
     }
 
     private void Update() {
@@ -106,7 +102,7 @@ public class Elevator_Turret : MonoBehaviour {
     //
     private void UpdateCanon() {
         mouseWorldPos = GM.GetMouseWorldPos(); mouseWorldPos.z = transform.position.z;
-        switch (GM.GetState()) {
+        switch (GM.GetPlayerState()) {
             case 0:     // Funcionamiento de las torretas si el jugador esta fuera del elevador
                 TurretAutomatic();
                 break;
@@ -175,19 +171,24 @@ public class Elevator_Turret : MonoBehaviour {
                 target = null;
             }
         }
-        
-        // Verifica si las torretas salieron del rango o si fueron destruidas
+
+        // Verifica si el target fue destruido
+        if (target != null) {
+            if (target.GetComponent<Health>().GetHP() == 0) { target = null; }
+        }
+
+        // Verifica si las torretas salieron del rango
         if (target != null && target.CompareTag("Enemy Turret")) {
             if (!inverted) {
                 foreach (Collider2D collider in Physics2D.OverlapBoxAll(transform.position + detectionOffset, detectionRange, 0)) {
-                    if (collider.CompareTag("Enemy Turret") && collider.GetComponent<Health>().GetHP() != 0) {
+                    if (collider.CompareTag("Enemy Turret")) {
                         return;
                     }
                 }
                 target = null;
             } else {
                 foreach (Collider2D collider in Physics2D.OverlapBoxAll(transform.position - detectionOffset, detectionRange, 0)) {
-                    if (collider.CompareTag("Enemy Turret") && collider.GetComponent<Health>().GetHP() != 0) {
+                    if (collider.CompareTag("Enemy Turret")) {
                         return;
                     }
                 }
@@ -289,7 +290,7 @@ public class Elevator_Turret : MonoBehaviour {
     private void DisableTurret() {
         Debug.Log("Torreta del elevador " + gameObject.name + " Desactivada");
         if (!inverted) { turretCanon.transform.rotation = new Quaternion(0, 0, -0.642787576f, 0.766044497f); } else { turretCanon.transform.rotation = new Quaternion(0, 0, 0.642787576f, 0.766044497f); }
-        turretPanel.GetComponent<Repairable>().SetRepaired(false);
+        turretPanel.GetComponent<Turret_Panel>().SetRepaired(false);
         turretLight.GetComponent<Light2D>().enabled = false;
         disabled = true;
     }

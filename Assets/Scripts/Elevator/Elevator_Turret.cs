@@ -288,7 +288,7 @@ public class Elevator_Turret : MonoBehaviour {
     }
 
     private void DisableTurret() {
-        Debug.Log("Torreta del elevador " + gameObject.name + " Desactivada");
+        //Debug.Log("Torreta del elevador " + gameObject.name + " Desactivada");
         if (!inverted) { turretCanon.transform.rotation = new Quaternion(0, 0, -0.642787576f, 0.766044497f); } else { turretCanon.transform.rotation = new Quaternion(0, 0, 0.642787576f, 0.766044497f); }
         turretPanel.GetComponent<Turret_Panel>().SetRepaired(false);
         turretLight.GetComponent<Light2D>().enabled = false;

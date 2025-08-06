@@ -4,10 +4,10 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Scrap
   - Elevator
   - Elevator Turret
   - Enemy Turret
+  - Recyclable
   layers:
   - Default
   - TransparentFX
